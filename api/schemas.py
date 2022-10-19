@@ -4,7 +4,7 @@ from bson import ObjectId
 
 class User(BaseModel):
     id: ObjectId = Field(default_factory=ObjectId, alias="_id")
-    name: str = Field(...)
+    username: str = Field(...)
     email: EmailStr = Field(...)
     password: str = Field(...)
 
@@ -14,7 +14,7 @@ class User(BaseModel):
         arbitrary_types_allowed = True
         schema_extra = {
             "example": {
-                "name": "kiarash",
+                "username": "kiarash",
                 "email": "kiarash@kiarash.com",
                 "password": "secret"
             }
