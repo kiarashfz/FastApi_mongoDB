@@ -1,17 +1,24 @@
-from fastapi import FastAPI
-
-from api.routes import users
+from fastapi import FastAPI, Request
+from api.routes import users, auth
+from api.config import settings
+from fastapi.responses import JSONResponse
+from fastapi_jwt_auth.exceptions import AuthJWTException
+from fastapi_jwt_auth import AuthJWT
 
 app = FastAPI()
 
 app.include_router(users.router)
+app.include_router(auth.router)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.message}
+    )
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+@AuthJWT.load_config
+def get_config():
+    return settings
